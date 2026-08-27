@@ -19,9 +19,22 @@ export interface Profile {
   username?: string;
 }
 
+export interface CommunityActivityEntry {
+  userId: string;
+  username: string;
+  displayName: string;
+  avatarUrl: string | null;
+  drinkId: string;
+  stars: number;
+  review: string;
+  updatedAt: string;
+}
+
 export interface Pin {
   id: string;
-  drinkId: string;
+  drinkId?: string;
+  customName?: string;
+  isRare?: boolean;
   storeName: string;
   city?: string;
   note?: string;
