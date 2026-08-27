@@ -11,3 +11,22 @@ export interface Rating {
   review: string;
   updatedAt: string;
 }
+
+export interface Profile {
+  displayName: string;
+  bio: string;
+  avatarDataUrl: string | null;
+  username?: string;
+}
+
+export interface Pin {
+  id: string;
+  drinkId: string;
+  storeName: string;
+  city?: string;
+  note?: string;
+  lat?: number;
+  lng?: number;
+  postedBy?: string;
+  createdAt: string;
+}

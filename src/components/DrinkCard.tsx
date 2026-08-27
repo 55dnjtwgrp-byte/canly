@@ -1,5 +1,6 @@
 import type { Drink, Rating } from "../types";
 import { StarRating } from "./StarRating";
+import { CanArt } from "./CanArt";
 
 interface DrinkCardProps {
   drink: Drink;
@@ -10,9 +11,8 @@ interface DrinkCardProps {
 export function DrinkCard({ drink, rating, onClick }: DrinkCardProps) {
   return (
     <button type="button" className="drink-card" onClick={onClick}>
-      <div className="drink-can" style={{ background: `linear-gradient(160deg, ${drink.color}, #0000 140%)` }}>
-        <span className="drink-can__brand">{drink.brand}</span>
-        <span className="drink-can__flavor">{drink.flavor}</span>
+      <div className="drink-can">
+        <CanArt drink={drink} />
       </div>
       <div className="drink-card__name">{drink.name}</div>
       {rating ? (
