@@ -31,11 +31,14 @@ export function CanArt({ drink, showLabel = true, className }: CanArtProps) {
   const uid = useId().replace(/:/g, "");
   const bodyGrad = `can-body-${uid}`;
   const shineGrad = `can-shine-${uid}`;
+  const rimGrad = `can-rim-${uid}`;
 
   const light = shade(drink.color, 22);
   const dark = shade(drink.color, -30);
-  const rimLight = shade(drink.color, 38);
-  const rimDark = shade(drink.color, -42);
+  const aluLight = "#f4f5f7";
+  const aluBase = "#c9cdd3";
+  const aluDark = "#8b8f96";
+  const aluDeep = "#5a5e64";
 
   const flavorLines = wrapFlavor(drink.flavor ?? "");
 
@@ -60,14 +63,18 @@ export function CanArt({ drink, showLabel = true, className }: CanArtProps) {
           <stop offset="42%" stopColor="#fff" stopOpacity="0.22" />
           <stop offset="54%" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
+        <radialGradient id={rimGrad} cx="35%" cy="28%" r="75%">
+          <stop offset="0%" stopColor={aluLight} />
+          <stop offset="100%" stopColor={aluBase} />
+        </radialGradient>
       </defs>
 
-      <ellipse cx="60" cy="251" rx="40" ry="8" fill={rimDark} />
+      <ellipse cx="60" cy="251" rx="40" ry="8" fill={aluDeep} />
       <rect x="20" y="16" width="80" height="234" rx="10" fill={`url(#${bodyGrad})`} />
       <rect x="20" y="16" width="80" height="234" rx="10" fill={`url(#${shineGrad})`} />
-      <ellipse cx="60" cy="16" rx="40" ry="8" fill={rimLight} stroke={rimDark} strokeWidth="1.5" />
-      <ellipse cx="60" cy="12.5" rx="24" ry="3" fill={rimDark} opacity="0.55" />
-      <rect x="52" y="4" width="16" height="5" rx="2.5" fill={rimDark} opacity="0.6" />
+      <ellipse cx="60" cy="16" rx="40" ry="8" fill={`url(#${rimGrad})`} stroke={aluDeep} strokeWidth="1.5" />
+      <ellipse cx="60" cy="12.5" rx="24" ry="3" fill={aluDark} opacity="0.55" />
+      <rect x="52" y="4" width="16" height="5" rx="2.5" fill={aluDark} opacity="0.6" />
 
       {showLabel && (
         <>
