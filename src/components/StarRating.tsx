@@ -5,20 +5,30 @@ interface StarRatingProps {
 }
 
 export function StarRating({ value, onChange, size = "sm" }: StarRatingProps) {
-  const interactive = Boolean(onChange);
   const stars = [1, 2, 3, 4, 5];
 
+  if (!onChange) {
+    return (
+      <div className={`star-rating star-rating--${size}`} aria-label={`Rated ${value} out of 5 stars`}>
+        {stars.map((star) => (
+          <span key={star} className={`star ${star <= value ? "star--filled" : ""}`} aria-hidden="true">
+            ★
+          </span>
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className={`star-rating star-rating--${size}`} role={interactive ? "radiogroup" : undefined} aria-label="Rating">
+    <div className={`star-rating star-rating--${size}`} role="radiogroup" aria-label="Rating">
       {stars.map((star) => (
         <button
           type="button"
           key={star}
           className={`star ${star <= value ? "star--filled" : ""}`}
-          disabled={!interactive}
           aria-label={`${star} star${star > 1 ? "s" : ""}`}
-          aria-pressed={interactive ? star <= value : undefined}
-          onClick={interactive ? () => onChange!(star) : undefined}
+          aria-pressed={star <= value}
+          onClick={() => onChange(star)}
         >
           ★
         </button>

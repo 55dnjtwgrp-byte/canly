@@ -11,3 +11,9 @@ export interface Rating {
   review: string;
   updatedAt: string;
 }
+
+export interface Profile {
+  displayName: string;
+  bio: string;
+  avatarDataUrl: string | null;
+}
