@@ -23,13 +23,8 @@ export function usePins() {
     }
   }, [pins]);
 
-  const addPin = useCallback((pin: Omit<Pin, "id" | "createdAt">) => {
-    const newPin: Pin = {
-      ...pin,
-      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-      createdAt: new Date().toISOString(),
-    };
-    setPins((prev) => [newPin, ...prev]);
+  const addPin = useCallback((pin: Pin) => {
+    setPins((prev) => [pin, ...prev]);
   }, []);
 
   const removePin = useCallback((id: string) => {

@@ -1,25 +1,43 @@
 import { useMemo, useState } from "react";
 import { drinks } from "../data/drinks";
 import { usePins } from "../hooks/usePins";
+import { useSharedPins } from "../hooks/useSharedPins";
 import { useRatings } from "../hooks/useRatings";
+import { useProfile } from "../hooks/useProfile";
+import { useGeolocation } from "../hooks/useGeolocation";
 import { CanArt } from "../components/CanArt";
 import { DrinkCard } from "../components/DrinkCard";
+import { PinMap } from "../components/PinMap";
 import { timeAgo } from "../lib/timeAgo";
-import type { Drink } from "../types";
+import type { Drink, Pin } from "../types";
 
 const drinkById = new Map(drinks.map((d) => [d.id, d]));
 
 type Mode = "list" | "pick" | "details" | "confirm";
 
+function makeId(): string {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
 export function Pins() {
-  const { pins, addPin, removePin } = usePins();
+  const { pins, addPin } = usePins();
+  const { sharedPins, isShared, insertSharedPin } = useSharedPins();
   const { ratings } = useRatings();
+  const { profile } = useProfile();
+  const userLocation = useGeolocation();
+
   const [mode, setMode] = useState<Mode>("list");
   const [query, setQuery] = useState("");
   const [selectedDrink, setSelectedDrink] = useState<Drink | null>(null);
   const [storeName, setStoreName] = useState("");
   const [city, setCity] = useState("");
   const [note, setNote] = useState("");
+  const [pickedLocation, setPickedLocation] = useState<[number, number] | null>(null);
+  const [savedPin, setSavedPin] = useState<Pin | null>(null);
+
+  const displayPins = isShared ? sharedPins : pins;
 
   const filteredDrinks = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -32,12 +50,30 @@ export function Pins() {
     );
   }, [query]);
 
+  const mapMarkers = useMemo(
+    () =>
+      displayPins
+        .filter((p): p is Pin & { lat: number; lng: number } => p.lat !== undefined && p.lng !== undefined)
+        .map((p) => {
+          const drink = drinkById.get(p.drinkId);
+          return {
+            id: p.id,
+            lat: p.lat,
+            lng: p.lng,
+            color: drink?.color ?? "#8a99a8",
+            label: `${drink?.name ?? "Drink"} — ${p.storeName}`,
+          };
+        }),
+    [displayPins]
+  );
+
   const clearForm = () => {
     setQuery("");
     setSelectedDrink(null);
     setStoreName("");
     setCity("");
     setNote("");
+    setPickedLocation(null);
   };
 
   const backToList = () => {
@@ -50,14 +86,22 @@ export function Pins() {
     setMode("details");
   };
 
-  const handleSave = () => {
-    if (!selectedDrink || !storeName.trim()) return;
-    addPin({
+  const handleSave = async () => {
+    if (!selectedDrink || !storeName.trim() || !pickedLocation) return;
+    const pin: Pin = {
+      id: makeId(),
       drinkId: selectedDrink.id,
       storeName: storeName.trim(),
       city: city.trim() || undefined,
       note: note.trim() || undefined,
-    });
+      lat: pickedLocation[0],
+      lng: pickedLocation[1],
+      postedBy: profile.displayName.trim() || undefined,
+      createdAt: new Date().toISOString(),
+    };
+    addPin(pin);
+    if (isShared) await insertSharedPin(pin);
+    setSavedPin(pin);
     setMode("confirm");
   };
 
@@ -108,6 +152,17 @@ export function Pins() {
           </div>
           <h2 className="pin-entry__name">{selectedDrink.name}</h2>
 
+          <p className="pin-entry__map-hint">
+            {pickedLocation ? "Tap the map again to move your pin." : "Tap the map where you found it."}
+          </p>
+          <PinMap
+            markers={[]}
+            center={userLocation}
+            onMapClick={(lat, lng) => setPickedLocation([lat, lng])}
+            pickedLocation={pickedLocation}
+            className="pin-entry__map"
+          />
+
           <label className="form-field">
             <span className="form-field__label">Store name</span>
             <input
@@ -116,7 +171,6 @@ export function Pins() {
               value={storeName}
               onChange={(e) => setStoreName(e.target.value)}
               placeholder="e.g. Walgreens on 5th"
-              autoFocus
             />
           </label>
 
@@ -146,7 +200,7 @@ export function Pins() {
             type="button"
             className="btn btn--primary pin-entry__save"
             onClick={handleSave}
-            disabled={!storeName.trim()}
+            disabled={!storeName.trim() || !pickedLocation}
           >
             Drop pin
           </button>
@@ -168,6 +222,7 @@ export function Pins() {
             {storeName}
             {city ? ` · ${city}` : ""}
           </p>
+          {isShared && savedPin && <p className="pin-confirm__shared">Visible to everyone with this app.</p>}
           <div className="log-confirm__actions">
             <button type="button" className="btn btn--primary" onClick={startAnother}>
               Drop another
@@ -192,13 +247,17 @@ export function Pins() {
           + Drop a pin
         </button>
 
-        {pins.length === 0 ? (
+        {mapMarkers.length > 0 && (
+          <PinMap markers={mapMarkers} center={userLocation} className="pins-list__map" />
+        )}
+
+        {displayPins.length === 0 ? (
           <p className="empty pins-empty">
             No pins yet. Drop one next time you spot a new flavor in the wild.
           </p>
         ) : (
           <ul className="pin-list">
-            {pins.map((pin) => {
+            {displayPins.map((pin) => {
               const drink = drinkById.get(pin.drinkId);
               if (!drink) return null;
               return (
@@ -216,14 +275,8 @@ export function Pins() {
                       {pin.city ? ` · ${pin.city}` : ""}
                     </p>
                     {pin.note && <p className="pin-item__note">{pin.note}</p>}
+                    {isShared && pin.postedBy && <p className="pin-item__by">— {pin.postedBy}</p>}
                   </div>
-                  <button
-                    type="button"
-                    className="link-btn link-btn--danger pin-item__remove"
-                    onClick={() => removePin(pin.id)}
-                  >
-                    Remove
-                  </button>
                 </li>
               );
             })}

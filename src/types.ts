@@ -24,5 +24,8 @@ export interface Pin {
   storeName: string;
   city?: string;
   note?: string;
+  lat?: number;
+  lng?: number;
+  postedBy?: string;
   createdAt: string;
 }
