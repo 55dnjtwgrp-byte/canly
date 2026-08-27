@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { drinks } from "../data/drinks";
 import type { Drink } from "../types";
+import { CanArt } from "./CanArt";
 
 interface DrinkPickerModalProps {
   onClose: () => void;
@@ -42,7 +43,9 @@ export function DrinkPickerModal({ onClose, onPick, excludeIds }: DrinkPickerMod
         <div className="picker-list">
           {results.map((drink) => (
             <button type="button" key={drink.id} className="picker-list__item" onClick={() => onPick(drink)}>
-              <span className="picker-list__swatch" style={{ background: drink.color }} />
+              <span className="picker-list__swatch">
+                <CanArt drink={drink} showLabel={false} />
+              </span>
               <span>
                 <span className="picker-list__name">{drink.name}</span>
                 <span className="picker-list__brand">{drink.brand}</span>

@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { drinks } from "../data/drinks";
 import { useRatings } from "../hooks/useRatings";
 import { StarRating } from "../components/StarRating";
+import { CanArt } from "../components/CanArt";
+import { DrinkCard } from "../components/DrinkCard";
 import type { Drink } from "../types";
 
 export function Log() {
@@ -49,12 +51,8 @@ export function Log() {
     return (
       <div className="page">
         <div className="log-confirm">
-          <div
-            className="drink-can log-confirm__can"
-            style={{ background: `linear-gradient(160deg, ${selectedDrink.color}, #0000 140%)` }}
-          >
-            <span className="drink-can__brand">{selectedDrink.brand}</span>
-            <span className="drink-can__flavor">{selectedDrink.flavor}</span>
+          <div className="drink-can log-confirm__can">
+            <CanArt drink={selectedDrink} />
           </div>
           <p className="log-confirm__check">Logged</p>
           <h2 className="log-confirm__name">{selectedDrink.name}</h2>
@@ -81,12 +79,8 @@ export function Log() {
             ← Choose a different drink
           </button>
 
-          <div
-            className="drink-can log-entry__can"
-            style={{ background: `linear-gradient(160deg, ${selectedDrink.color}, #0000 140%)` }}
-          >
-            <span className="drink-can__brand">{selectedDrink.brand}</span>
-            <span className="drink-can__flavor">{selectedDrink.flavor}</span>
+          <div className="drink-can log-entry__can">
+            <CanArt drink={selectedDrink} />
           </div>
           <h2 className="log-entry__name">{selectedDrink.name}</h2>
 
@@ -126,16 +120,7 @@ export function Log() {
 
       <main className="grid">
         {filteredDrinks.map((drink) => (
-          <button type="button" className="drink-card" key={drink.id} onClick={() => selectDrink(drink)}>
-            <div
-              className="drink-can"
-              style={{ background: `linear-gradient(160deg, ${drink.color}, #0000 140%)` }}
-            >
-              <span className="drink-can__brand">{drink.brand}</span>
-              <span className="drink-can__flavor">{drink.flavor}</span>
-            </div>
-            <div className="drink-card__name">{drink.name}</div>
-          </button>
+          <DrinkCard key={drink.id} drink={drink} rating={ratings[drink.id]} onClick={() => selectDrink(drink)} />
         ))}
         {filteredDrinks.length === 0 && <p className="empty">No drinks found for "{query}".</p>}
       </main>

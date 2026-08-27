@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Drink, Rating } from "../types";
 import { StarRating } from "./StarRating";
+import { CanArt } from "./CanArt";
 
 interface RateModalProps {
   drink: Drink;
@@ -25,7 +26,9 @@ export function RateModal({ drink, existing, onClose, onSave, onDelete }: RateMo
         <button type="button" className="modal__close" onClick={onClose} aria-label="Close">
           ×
         </button>
-        <div className="modal__can" style={{ background: `linear-gradient(160deg, ${drink.color}, #0000 140%)` }} />
+        <div className="modal__can">
+          <CanArt drink={drink} />
+        </div>
         <h2 className="modal__title">{drink.name}</h2>
         <p className="modal__brand">{drink.brand}</p>
 

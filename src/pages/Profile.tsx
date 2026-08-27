@@ -6,6 +6,7 @@ import { useProfile } from "../hooks/useProfile";
 import { DrinkPickerModal } from "../components/DrinkPickerModal";
 import { EditProfileModal } from "../components/EditProfileModal";
 import { StarRating } from "../components/StarRating";
+import { CanArt } from "../components/CanArt";
 import type { Drink } from "../types";
 
 const drinkById = new Map(drinks.map((d) => [d.id, d]));
@@ -86,12 +87,8 @@ export function Profile() {
                 <span className="favorite-slot__rank">{slot + 1}</span>
                 {drink ? (
                   <div className="favorite-slot__filled">
-                    <div
-                      className="drink-can drink-can--favorite"
-                      style={{ background: `linear-gradient(160deg, ${drink.color}, #0000 140%)` }}
-                    >
-                      <span className="drink-can__brand">{drink.brand}</span>
-                      <span className="drink-can__flavor">{drink.flavor}</span>
+                    <div className="drink-can drink-can--favorite">
+                      <CanArt drink={drink} />
                     </div>
                     <p className="favorite-slot__name">{drink.name}</p>
                     <div className="favorite-slot__actions">
@@ -123,10 +120,9 @@ export function Profile() {
                 if (!drink) return null;
                 return (
                   <li className="activity-item" key={drinkId}>
-                    <div
-                      className="activity-item__swatch"
-                      style={{ background: `linear-gradient(160deg, ${drink.color}, #0000 140%)` }}
-                    />
+                    <div className="activity-item__swatch">
+                      <CanArt drink={drink} showLabel={false} />
+                    </div>
                     <div className="activity-item__body">
                       <div className="activity-item__top">
                         <span className="activity-item__name">{drink.name}</span>
