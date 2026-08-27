@@ -16,6 +16,7 @@ export interface Profile {
   displayName: string;
   bio: string;
   avatarDataUrl: string | null;
+  username?: string;
 }
 
 export interface Pin {

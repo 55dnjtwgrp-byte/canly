@@ -1,19 +1,24 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { drinks } from "../data/drinks";
 import { useFavorites } from "../hooks/useFavorites";
 import { useRatings } from "../hooks/useRatings";
 import { useProfile } from "../hooks/useProfile";
+import { useAuth } from "../hooks/useAuth";
 import { DrinkPickerModal } from "../components/DrinkPickerModal";
 import { EditProfileModal } from "../components/EditProfileModal";
 import { RateModal } from "../components/RateModal";
+import { AuthModal } from "../components/AuthModal";
 import { StarRating } from "../components/StarRating";
 import { CanArt } from "../components/CanArt";
 import { exportBackup, importBackup } from "../lib/backup";
+import { hasLocalDataToImport, importLocalDataToAccount } from "../lib/importLocalData";
 import type { Drink } from "../types";
 
 const drinkById = new Map(drinks.map((d) => [d.id, d]));
 
 export function Profile() {
+  const { user, isConfigured, signOut } = useAuth();
   const { favorites, setFavorite, clearFavorite } = useFavorites();
   const { ratings, rateDrink, clearRating } = useRatings();
   const { profile, updateProfile } = useProfile();
@@ -22,7 +27,39 @@ export function Profile() {
   const [activeDrink, setActiveDrink] = useState<Drink | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const [exportError, setExportError] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showImportBanner, setShowImportBanner] = useState(false);
+  const [importingLocal, setImportingLocal] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (user) setShowImportBanner(hasLocalDataToImport());
+  }, [user]);
+
+  const handleImportLocalData = async () => {
+    if (!user) return;
+    setImportingLocal(true);
+    const result = await importLocalDataToAccount(user.id);
+    setImportingLocal(false);
+    if (result.error) {
+      setImportError(result.error);
+      return;
+    }
+    window.location.reload();
+  };
+
+  const handleShare = async () => {
+    if (!profile.username) return;
+    const url = `${window.location.origin}${window.location.pathname}#/u/${profile.username}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setShareCopied(true);
+      setTimeout(() => setShareCopied(false), 2000);
+    } catch {
+      window.prompt("Copy your profile link:", url);
+    }
+  };
 
   const ratedEntries = Object.entries(ratings).sort(
     (a, b) => new Date(b[1].updatedAt).getTime() - new Date(a[1].updatedAt).getTime()
@@ -84,6 +121,7 @@ export function Profile() {
 
         <div className="profile-header__info">
           <h1 className="profile-name">{profile.displayName || "Set your name"}</h1>
+          {user && profile.username && <p className="public-profile__username">@{profile.username}</p>}
           {profile.bio ? (
             <p className="profile-bio">{profile.bio}</p>
           ) : (
@@ -91,10 +129,57 @@ export function Profile() {
           )}
         </div>
 
-        <button type="button" className="btn btn--ghost-outline profile-edit-btn" onClick={() => setEditingProfile(true)}>
-          Edit profile
-        </button>
+        <div className="profile-header__actions">
+          <button type="button" className="btn btn--ghost-outline profile-edit-btn" onClick={() => setEditingProfile(true)}>
+            Edit profile
+          </button>
+          {user ? (
+            <button type="button" className="link-btn profile-signout-btn" onClick={signOut}>
+              Sign out
+            </button>
+          ) : (
+            isConfigured && (
+              <button type="button" className="link-btn" onClick={() => setShowAuthModal(true)}>
+                Sign up / Log in
+              </button>
+            )
+          )}
+        </div>
       </header>
+
+      {user && profile.username && (
+        <div className="profile-share">
+          <button type="button" className="btn btn--ghost-outline" onClick={handleShare}>
+            {shareCopied ? "Link copied!" : "Share profile"}
+          </button>
+          <Link to={`/u/${profile.username}`} className="link-btn">
+            View public profile
+          </Link>
+        </div>
+      )}
+
+      {!user && isConfigured && (
+        <p className="account-cta">
+          <button type="button" className="link-btn" onClick={() => setShowAuthModal(true)}>
+            Create an account
+          </button>{" "}
+          to save your profile and make it shareable.
+        </p>
+      )}
+
+      {showImportBanner && (
+        <div className="import-banner">
+          <p className="import-banner__text">Found ratings and favorites from before you signed in.</p>
+          <div className="import-banner__actions">
+            <button type="button" className="btn btn--primary" onClick={handleImportLocalData} disabled={importingLocal}>
+              {importingLocal ? "Importing…" : "Import into my account"}
+            </button>
+            <button type="button" className="link-btn" onClick={() => setShowImportBanner(false)}>
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="profile-stats">
         <div>
@@ -175,7 +260,9 @@ export function Profile() {
 
         <h2 className="section-title section-title--activity">Your Data</h2>
         <p className="data-section__note">
-          Everything lives in this browser only. Export a backup so you don't lose it.
+          {user
+            ? "Your ratings and profile are saved to your account. Pins still live in this browser only — export a backup so you don't lose them."
+            : "Everything lives in this browser only. Export a backup so you don't lose it."}
         </p>
         <div className="data-section__actions">
           <button type="button" className="btn btn--ghost-outline" onClick={handleExport}>
@@ -229,6 +316,10 @@ export function Profile() {
             setActiveDrink(null);
           }}
         />
+      )}
+
+      {showAuthModal && (
+        <AuthModal onClose={() => setShowAuthModal(false)} onAuthed={() => setShowAuthModal(false)} />
       )}
     </div>
   );

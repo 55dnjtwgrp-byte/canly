@@ -1222,3 +1222,104 @@ body {
 .leaflet-control-attribution a {
   color: var(--text-dim) !important;
 }
+
+.profile-header__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.profile-signout-btn {
+  color: var(--text-dim);
+}
+
+.public-profile__username {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin: 2px 0 0;
+}
+
+.profile-share {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin: 16px 0 0;
+}
+
+.account-cta {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+  margin: 12px 0 0;
+}
+
+.import-banner {
+  margin: 20px auto 0;
+  max-width: 420px;
+  background: var(--bg-raised);
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.import-banner__text {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.import-banner__actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+
+.favorite-slot__empty--static {
+  cursor: default;
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+
+.favorite-slot__empty--static:hover {
+  border-color: var(--border);
+  color: var(--text-dim);
+}
+
+.activity-item__hit--static {
+  cursor: default;
+}
+
+.activity-item__hit--static:hover {
+  border-color: var(--border);
+}
+
+.public-profile__back {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.modal--auth {
+  max-width: 380px;
+}
+
+.auth-modal__submit {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.auth-modal__toggle {
+  display: block;
+  margin: 16px auto 0;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .profile-header__actions {
+    align-items: center;
+  }
+}
