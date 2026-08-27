@@ -157,6 +157,10 @@ body {
   margin: 6px 0 24px;
 }
 
+.header--feed {
+  padding: 8px 0 32px;
+}
+
 .search {
   width: 100%;
   max-width: 480px;
@@ -406,6 +410,47 @@ body {
   color: var(--text-dim);
   text-align: center;
   margin: 0 0 24px;
+}
+
+.drink-row {
+  margin-bottom: 40px;
+}
+
+.section-title--row {
+  text-align: left;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.drink-row__track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scroll-snap-type: x proximity;
+}
+
+.drink-row__item {
+  flex: 0 0 130px;
+  scroll-snap-align: start;
+}
+
+.drink-row__item .drink-card__name {
+  font-size: 12px;
+}
+
+.friends-placeholder {
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.friends-placeholder__text {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.5;
 }
 
 .favorites-row {

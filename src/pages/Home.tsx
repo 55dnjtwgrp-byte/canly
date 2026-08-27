@@ -1,57 +1,49 @@
 import { useMemo, useState } from "react";
-import { drinks } from "../data/drinks";
+import { drinks, trendingDrinkIds } from "../data/drinks";
 import { useRatings } from "../hooks/useRatings";
-import { DrinkCard } from "../components/DrinkCard";
 import { RateModal } from "../components/RateModal";
+import { DrinkRow } from "../components/DrinkRow";
 import type { Drink } from "../types";
 
+const drinkById = new Map(drinks.map((d) => [d.id, d]));
+
 export function Home() {
-  const [query, setQuery] = useState("");
   const [activeDrink, setActiveDrink] = useState<Drink | null>(null);
   const { ratings, rateDrink, clearRating } = useRatings();
 
-  const filteredDrinks = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return drinks;
-    return drinks.filter(
-      (d) =>
-        d.name.toLowerCase().includes(q) ||
-        d.brand.toLowerCase().includes(q) ||
-        d.flavor?.toLowerCase().includes(q)
-    );
-  }, [query]);
+  const trending = useMemo(
+    () => trendingDrinkIds.map((id) => drinkById.get(id)).filter((d): d is Drink => Boolean(d)),
+    []
+  );
 
-  const ratedCount = Object.keys(ratings).length;
+  const recentlyLogged = useMemo(
+    () =>
+      Object.entries(ratings)
+        .sort((a, b) => new Date(b[1].updatedAt).getTime() - new Date(a[1].updatedAt).getTime())
+        .slice(0, 8)
+        .map(([id]) => drinkById.get(id))
+        .filter((d): d is Drink => Boolean(d)),
+    [ratings]
+  );
 
   return (
     <div className="page">
-      <header className="header">
-        <p className="tagline">Rate your favorite energy drinks.</p>
-        <input
-          type="search"
-          className="search"
-          placeholder="Search Red Bull, Monster, Alani Nu..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          autoFocus
-        />
-        <p className="stats">
-          {ratedCount} drink{ratedCount === 1 ? "" : "s"} rated
-        </p>
+      <header className="header header--feed">
+        <p className="tagline">Your energy drink feed.</p>
       </header>
 
-      <main className="grid">
-        {filteredDrinks.map((drink) => (
-          <DrinkCard
-            key={drink.id}
-            drink={drink}
-            rating={ratings[drink.id]}
-            onClick={() => setActiveDrink(drink)}
-          />
-        ))}
-        {filteredDrinks.length === 0 && (
-          <p className="empty">No drinks found for "{query}".</p>
-        )}
+      <main>
+        <section className="drink-row">
+          <h2 className="section-title section-title--row">Friends Activity</h2>
+          <div className="friends-placeholder">
+            <p className="friends-placeholder__text">
+              See what your friends are drinking here once profiles go public.
+            </p>
+          </div>
+        </section>
+
+        <DrinkRow title="Popular This Week" drinks={trending} ratings={ratings} onSelect={setActiveDrink} />
+        <DrinkRow title="Recently Logged" drinks={recentlyLogged} ratings={ratings} onSelect={setActiveDrink} />
       </main>
 
       {activeDrink && (

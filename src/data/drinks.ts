@@ -44,3 +44,16 @@ export const drinks: Drink[] = [
   { id: "prime-energy-blue-raspberry", name: "Prime Energy", brand: "Prime", flavor: "Blue Raspberry", color: "#2e6fd6" },
   { id: "ryse-fuel", name: "Ryse Fuel", brand: "Ryse", flavor: "Original", color: "#1e1e1e" },
 ];
+
+// Curated picks shown in the "Popular This Week" row. Editorial for now —
+// swap for real aggregate rating/log data once ratings live on a backend.
+export const trendingDrinkIds = [
+  "redbull-original",
+  "monster-ultra",
+  "alani-hawaiian-shaved-ice",
+  "celsius-sparkling-orange",
+  "bang-original",
+  "ghost-swedish-fish",
+  "c4-original",
+  "prime-energy-blue-raspberry",
+];
