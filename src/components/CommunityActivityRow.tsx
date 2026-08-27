@@ -8,10 +8,11 @@ import type { CommunityActivityEntry } from "../types";
 const drinkById = new Map(drinks.map((d) => [d.id, d]));
 
 interface CommunityActivityRowProps {
+  title: string;
   entries: CommunityActivityEntry[];
 }
 
-export function CommunityActivityRow({ entries }: CommunityActivityRowProps) {
+export function CommunityActivityRow({ title, entries }: CommunityActivityRowProps) {
   const visible = entries
     .map((entry) => {
       const drink = drinkById.get(entry.drinkId);
@@ -22,7 +23,7 @@ export function CommunityActivityRow({ entries }: CommunityActivityRowProps) {
 
   return (
     <section className="drink-row">
-      <h2 className="section-title section-title--row">Community Activity</h2>
+      <h2 className="section-title section-title--row">{title}</h2>
       {visible.length === 0 ? (
         <div className="friends-placeholder">
           <p className="friends-placeholder__text">

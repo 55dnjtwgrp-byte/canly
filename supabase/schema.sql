@@ -89,3 +89,19 @@ alter table favorites enable row level security;
 create policy "Favorites are public" on favorites for select using (true);
 create policy "Users manage their own favorites" on favorites for all
   using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create table if not exists follows (
+  follower_id uuid not null references auth.users(id) on delete cascade,
+  followee_id uuid not null references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  primary key (follower_id, followee_id)
+);
+
+alter table follows enable row level security;
+
+-- Public by design, same as everything else here — who follows whom is
+-- visible on a public profile. Only the follower can create or remove
+-- their own follow relationship.
+create policy "Follows are public" on follows for select using (true);
+create policy "Users manage their own follows" on follows for all
+  using (auth.uid() = follower_id) with check (auth.uid() = follower_id);

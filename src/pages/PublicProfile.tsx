@@ -1,6 +1,8 @@
 import { useParams, Link } from "react-router-dom";
 import { drinks } from "../data/drinks";
 import { usePublicProfile } from "../hooks/usePublicProfile";
+import { useFollow } from "../hooks/useFollow";
+import { useAuth } from "../hooks/useAuth";
 import { StarRating } from "../components/StarRating";
 import { CanArt } from "../components/CanArt";
 
@@ -9,6 +11,8 @@ const drinkById = new Map(drinks.map((d) => [d.id, d]));
 export function PublicProfile() {
   const { username = "" } = useParams();
   const { status, data } = usePublicProfile(username);
+  const { user } = useAuth();
+  const { isFollowing, followerCount, loading: followLoading, toggle } = useFollow(data?.userId ?? null);
 
   if (status === "loading") {
     return (
@@ -49,6 +53,7 @@ export function PublicProfile() {
     ? (ratedEntries.reduce((sum, [, r]) => sum + r.stars, 0) / ratedCount).toFixed(1)
     : null;
   const initials = (profile.displayName.trim() || username).slice(0, 2).toUpperCase();
+  const isSelf = user?.id === data.userId;
 
   return (
     <div className="page">
@@ -66,6 +71,25 @@ export function PublicProfile() {
           <p className="public-profile__username">@{username}</p>
           {profile.bio && <p className="profile-bio">{profile.bio}</p>}
         </div>
+
+        {!isSelf &&
+          (user ? (
+            <button
+              type="button"
+              className={`btn ${isFollowing ? "btn--ghost-outline" : "btn--primary"} public-profile__follow`}
+              onClick={toggle}
+              disabled={followLoading}
+            >
+              {isFollowing ? "Following" : "Follow"}
+            </button>
+          ) : (
+            <p className="public-profile__follow-cta">
+              <Link to="/profile" className="link-btn">
+                Sign in
+              </Link>{" "}
+              to follow
+            </p>
+          ))}
       </header>
 
       <div className="profile-stats">
@@ -80,6 +104,10 @@ export function PublicProfile() {
         <div>
           <span className="profile-stats__num">{avgRating ?? "—"}</span>
           <span className="profile-stats__label">avg rating</span>
+        </div>
+        <div>
+          <span className="profile-stats__num">{followerCount}</span>
+          <span className="profile-stats__label">followers</span>
         </div>
       </div>
 

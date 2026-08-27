@@ -17,21 +17,36 @@ interface ProfileRow {
   avatar_url: string | null;
 }
 
-export function useCommunityActivity(limit = 10): CommunityActivityEntry[] {
+/**
+ * Recent ratings/reviews across all users, or restricted to `onlyUserIds`
+ * when given (the signed-in user's "following" list) — an empty array
+ * short-circuits to no results rather than falling back to global.
+ */
+export function useCommunityActivity(onlyUserIds?: string[], limit = 10): CommunityActivityEntry[] {
   const supabase = getSupabase();
   const [entries, setEntries] = useState<CommunityActivityEntry[]>([]);
+  const filterKey = onlyUserIds?.join(",") ?? null;
 
   useEffect(() => {
-    if (!supabase) return;
+    if (!supabase || onlyUserIds?.length === 0) {
+      setEntries([]);
+      return;
+    }
     let cancelled = false;
 
     (async () => {
-      const { data: ratingRows, error: ratingsError } = await supabase
+      let query = supabase
         .from("ratings")
         .select("user_id, drink_id, stars, review, updated_at")
         .order("updated_at", { ascending: false })
         .limit(limit);
-      if (cancelled || ratingsError || !ratingRows || ratingRows.length === 0) return;
+      if (onlyUserIds) query = query.in("user_id", onlyUserIds);
+
+      const { data: ratingRows, error: ratingsError } = await query;
+      if (cancelled || ratingsError || !ratingRows || ratingRows.length === 0) {
+        if (!cancelled) setEntries([]);
+        return;
+      }
 
       const userIds = [...new Set((ratingRows as RatingRow[]).map((r) => r.user_id))];
       const { data: profileRows, error: profilesError } = await supabase
@@ -64,7 +79,8 @@ export function useCommunityActivity(limit = 10): CommunityActivityEntry[] {
     return () => {
       cancelled = true;
     };
-  }, [supabase, limit]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabase, filterKey, limit]);
 
   return entries;
 }
