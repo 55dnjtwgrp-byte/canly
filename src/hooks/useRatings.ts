@@ -18,7 +18,11 @@ export function useRatings() {
   const [ratings, setRatings] = useState<RatingsMap>(() => loadRatings());
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(ratings));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(ratings));
+    } catch {
+      // storage unavailable (e.g. private browsing) — ratings stay in-memory for this session
+    }
   }, [ratings]);
 
   const rateDrink = useCallback((drinkId: string, stars: number, review: string) => {

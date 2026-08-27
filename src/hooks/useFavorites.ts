@@ -18,7 +18,11 @@ export function useFavorites() {
   const [favorites, setFavorites] = useState<(string | null)[]>(() => loadFavorites());
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+    } catch {
+      // storage unavailable (e.g. private browsing) — favorites stay in-memory for this session
+    }
   }, [favorites]);
 
   const setFavorite = useCallback((slot: number, drinkId: string) => {
