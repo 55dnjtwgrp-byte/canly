@@ -271,25 +271,52 @@ body {
   gap: 2px;
 }
 
+.star-wrap {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+}
+
 .star {
-  background: none;
-  border: none;
-  padding: 0;
+  display: block;
   font-size: 15px;
-  color: var(--star-empty);
-  cursor: default;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .star-rating--lg .star {
   font-size: 32px;
 }
 
+.star--empty {
+  color: var(--star-empty);
+}
+
 .star--filled {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
   color: var(--star);
 }
 
-.star-rating:has(button) .star {
+.star-hit {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
+}
+
+.star-hit--half {
+  left: 0;
+}
+
+.star-hit--full {
+  right: 0;
 }
 
 .modal-overlay {
