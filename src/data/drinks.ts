@@ -107,6 +107,7 @@ export const drinks: Drink[] = [
   { id: "rockstar-original", name: "Rockstar Energy", brand: "Rockstar", flavor: "Original", color: "#e0c020" },
   { id: "rockstar-punched", name: "Rockstar Punched", brand: "Rockstar", flavor: "Punched Guava", color: "#c92e5a" },
   { id: "rockstar-zero-carb", name: "Rockstar Zero Carb", brand: "Rockstar", flavor: "Zero Carb", color: "#3a3a3a" },
+  { id: "rockstar-lemonade", name: "Rockstar Lemonade", brand: "Rockstar", flavor: "Lemonade", color: "#e0d020" },
   { id: "rockstar-recovery-lemonade", name: "Rockstar Recovery Lemon Lime", brand: "Rockstar", flavor: "Recovery · Lemon Lime", color: "#c9e020" },
   { id: "rockstar-xdurance", name: "Rockstar Xdurance Fruit Punch", brand: "Rockstar", flavor: "Xdurance · Fruit Punch", color: "#c9203a" },
   { id: "rockstar-pure-zero-punched", name: "Rockstar Pure Zero Punched", brand: "Rockstar", flavor: "Pure Zero Punched", color: "#e0507a" },
