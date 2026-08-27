@@ -475,9 +475,10 @@ body {
 
 .favorites-row {
   display: grid;
-  grid-template-columns: repeat(3, minmax(140px, 220px));
-  gap: 24px;
-  justify-content: center;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 .favorite-slot {
@@ -693,6 +694,31 @@ body {
 .profile-edit-btn {
   margin-bottom: 6px;
   flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .profile-header__info {
+    padding-bottom: 0;
+  }
+
+  .profile-bio {
+    max-width: 100%;
+  }
+
+  .profile-edit-btn {
+    margin-bottom: 0;
+  }
+
+  .profile-stats {
+    justify-content: center;
+  }
 }
 
 .btn--ghost-outline {
