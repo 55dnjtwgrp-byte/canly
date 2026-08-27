@@ -430,7 +430,8 @@ body {
 
 .profile-stats {
   display: flex;
-  gap: 40px;
+  flex-wrap: wrap;
+  gap: 28px 32px;
   margin: 28px 0 36px;
 }
 
@@ -764,6 +765,20 @@ body {
 .profile-edit-btn {
   margin-bottom: 6px;
   flex-shrink: 0;
+}
+
+.public-profile__follow {
+  margin-bottom: 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.public-profile__follow-cta {
+  margin: 0 0 6px;
+  flex-shrink: 0;
+  font-size: 13px;
+  color: var(--text-dim);
+  white-space: nowrap;
 }
 
 @media (max-width: 480px) {

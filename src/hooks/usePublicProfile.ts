@@ -3,6 +3,7 @@ import { getSupabase } from "../lib/supabase";
 import type { Profile, Rating } from "../types";
 
 export interface PublicProfileData {
+  userId: string;
   profile: Profile;
   ratings: Record<string, Rating>;
   favorites: (string | null)[];
@@ -53,6 +54,7 @@ export function usePublicProfile(username: string) {
       }
 
       setData({
+        userId: profileRow.id,
         profile: {
           displayName: profileRow.display_name,
           bio: profileRow.bio,

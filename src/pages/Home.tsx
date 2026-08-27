@@ -4,6 +4,7 @@ import { useRatings } from "../hooks/useRatings";
 import { usePins } from "../hooks/usePins";
 import { useSharedPins } from "../hooks/useSharedPins";
 import { useCommunityActivity } from "../hooks/useCommunityActivity";
+import { useFollowing } from "../hooks/useFollowing";
 import { useWeeklyPopular } from "../hooks/useWeeklyPopular";
 import { resolvePinDrink } from "../lib/pinDrink";
 import { RateModal } from "../components/RateModal";
@@ -19,8 +20,13 @@ export function Home() {
   const { ratings, rateDrink, clearRating } = useRatings();
   const { pins } = usePins();
   const { sharedPins, isShared } = useSharedPins();
-  const community = useCommunityActivity();
+  const followingIds = useFollowing();
+  const friendsActivity = useCommunityActivity(followingIds);
+  const communityActivity = useCommunityActivity();
   const weeklyPopular = useWeeklyPopular();
+
+  const activityEntries = friendsActivity.length > 0 ? friendsActivity : communityActivity;
+  const activityTitle = friendsActivity.length > 0 ? "Friends Activity" : "Community Activity";
 
   const displayPins = isShared ? sharedPins : pins;
 
@@ -59,7 +65,7 @@ export function Home() {
       </header>
 
       <main>
-        <CommunityActivityRow entries={community} />
+        <CommunityActivityRow title={activityTitle} entries={activityEntries} />
 
         <RareFindsRow items={rareFinds} />
 
