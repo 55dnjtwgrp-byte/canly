@@ -1,4 +1,4 @@
-const CACHE_NAME = "canly-v1";
+const CACHE_NAME = "canly-v2";
 
 self.addEventListener("install", () => {
   self.skipWaiting();
@@ -16,8 +16,11 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
+  const isNavigation = event.request.mode === "navigate";
+  const request = isNavigation ? new Request(event.request.url, { cache: "no-store" }) : event.request;
+
   event.respondWith(
-    fetch(event.request)
+    fetch(request)
       .then((response) => {
         const copy = response.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
