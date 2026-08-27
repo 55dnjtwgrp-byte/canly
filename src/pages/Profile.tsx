@@ -1,22 +1,27 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { drinks } from "../data/drinks";
 import { useFavorites } from "../hooks/useFavorites";
 import { useRatings } from "../hooks/useRatings";
 import { useProfile } from "../hooks/useProfile";
 import { DrinkPickerModal } from "../components/DrinkPickerModal";
 import { EditProfileModal } from "../components/EditProfileModal";
+import { RateModal } from "../components/RateModal";
 import { StarRating } from "../components/StarRating";
 import { CanArt } from "../components/CanArt";
+import { exportBackup, importBackup } from "../lib/backup";
 import type { Drink } from "../types";
 
 const drinkById = new Map(drinks.map((d) => [d.id, d]));
 
 export function Profile() {
   const { favorites, setFavorite, clearFavorite } = useFavorites();
-  const { ratings } = useRatings();
+  const { ratings, rateDrink, clearRating } = useRatings();
   const { profile, updateProfile } = useProfile();
   const [pickingSlot, setPickingSlot] = useState<number | null>(null);
   const [editingProfile, setEditingProfile] = useState(false);
+  const [activeDrink, setActiveDrink] = useState<Drink | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const ratedEntries = Object.entries(ratings).sort(
     (a, b) => new Date(b[1].updatedAt).getTime() - new Date(a[1].updatedAt).getTime()
@@ -33,6 +38,24 @@ export function Profile() {
     if (pickingSlot === null) return;
     setFavorite(pickingSlot, drink.id);
     setPickingSlot(null);
+  };
+
+  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+
+    const confirmed = window.confirm(
+      "This replaces your current ratings, favorites, pins, and profile with the backup file. Continue?"
+    );
+    if (!confirmed) return;
+
+    try {
+      await importBackup(file);
+      window.location.reload();
+    } catch {
+      setImportError("Couldn't read that file — make sure it's a Canly backup.");
+    }
   };
 
   return (
@@ -118,22 +141,45 @@ export function Profile() {
                 if (!drink) return null;
                 return (
                   <li className="activity-item" key={drinkId}>
-                    <div className="activity-item__swatch">
-                      <CanArt drink={drink} showLabel={false} />
-                    </div>
-                    <div className="activity-item__body">
-                      <div className="activity-item__top">
-                        <span className="activity-item__name">{drink.name}</span>
-                        <StarRating value={rating.stars} />
+                    <button type="button" className="activity-item__hit" onClick={() => setActiveDrink(drink)}>
+                      <div className="activity-item__swatch">
+                        <CanArt drink={drink} showLabel={false} />
                       </div>
-                      {rating.review && <p className="activity-item__review">{rating.review}</p>}
-                    </div>
+                      <div className="activity-item__body">
+                        <div className="activity-item__top">
+                          <span className="activity-item__name">{drink.name}</span>
+                          <StarRating value={rating.stars} />
+                        </div>
+                        {rating.review && <p className="activity-item__review">{rating.review}</p>}
+                      </div>
+                    </button>
                   </li>
                 );
               })}
             </ul>
           </>
         )}
+
+        <h2 className="section-title section-title--activity">Your Data</h2>
+        <p className="data-section__note">
+          Everything lives in this browser only. Export a backup so you don't lose it.
+        </p>
+        <div className="data-section__actions">
+          <button type="button" className="btn btn--ghost-outline" onClick={exportBackup}>
+            Export data
+          </button>
+          <button type="button" className="btn btn--ghost-outline" onClick={() => fileInputRef.current?.click()}>
+            Import data
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json"
+            onChange={handleImportFile}
+            className="visually-hidden"
+          />
+        </div>
+        {importError && <p className="form-error">{importError}</p>}
       </main>
 
       {pickingSlot !== null && (
@@ -151,6 +197,22 @@ export function Profile() {
           onSave={(updated) => {
             updateProfile(updated);
             setEditingProfile(false);
+          }}
+        />
+      )}
+
+      {activeDrink && (
+        <RateModal
+          drink={activeDrink}
+          existing={ratings[activeDrink.id]}
+          onClose={() => setActiveDrink(null)}
+          onSave={(stars, review) => {
+            rateDrink(activeDrink.id, stars, review);
+            setActiveDrink(null);
+          }}
+          onDelete={() => {
+            clearRating(activeDrink.id);
+            setActiveDrink(null);
           }}
         />
       )}

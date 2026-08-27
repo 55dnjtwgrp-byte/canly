@@ -877,14 +877,24 @@ body {
   gap: 12px;
 }
 
-.activity-item {
+.activity-item__hit {
   display: flex;
+  width: 100%;
   gap: 14px;
   background: var(--bg-raised);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px 14px;
   align-items: flex-start;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.activity-item__hit:hover {
+  border-color: var(--text-dim);
 }
 
 .activity-item__swatch {
@@ -1105,4 +1115,19 @@ body {
 .pin-item__remove {
   flex-shrink: 0;
   align-self: flex-start;
+}
+
+.data-section__note {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+  max-width: 360px;
+  margin: 0 auto 16px;
+  line-height: 1.5;
+}
+
+.data-section__actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
 }
