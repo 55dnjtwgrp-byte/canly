@@ -41,7 +41,7 @@ export function CanArt({ drink, showLabel = true, className }: CanArtProps) {
 
   return (
     <svg
-      viewBox="0 0 120 180"
+      viewBox="0 0 120 260"
       className={`can-art ${className ?? ""}`}
       preserveAspectRatio="xMidYMid meet"
       role="img"
@@ -62,21 +62,21 @@ export function CanArt({ drink, showLabel = true, className }: CanArtProps) {
         </linearGradient>
       </defs>
 
-      <ellipse cx="60" cy="171" rx="46" ry="8" fill={rimDark} />
-      <rect x="14" y="16" width="92" height="154" rx="12" fill={`url(#${bodyGrad})`} />
-      <rect x="14" y="16" width="92" height="154" rx="12" fill={`url(#${shineGrad})`} />
-      <ellipse cx="60" cy="16" rx="46" ry="8" fill={rimLight} stroke={rimDark} strokeWidth="1.5" />
-      <ellipse cx="60" cy="12.5" rx="28" ry="3.2" fill={rimDark} opacity="0.55" />
+      <ellipse cx="60" cy="251" rx="40" ry="8" fill={rimDark} />
+      <rect x="20" y="16" width="80" height="234" rx="10" fill={`url(#${bodyGrad})`} />
+      <rect x="20" y="16" width="80" height="234" rx="10" fill={`url(#${shineGrad})`} />
+      <ellipse cx="60" cy="16" rx="40" ry="8" fill={rimLight} stroke={rimDark} strokeWidth="1.5" />
+      <ellipse cx="60" cy="12.5" rx="24" ry="3" fill={rimDark} opacity="0.55" />
       <rect x="52" y="4" width="16" height="5" rx="2.5" fill={rimDark} opacity="0.6" />
 
       {showLabel && (
         <>
-          <rect x="14" y="108" width="92" height="50" fill="#000" opacity="0.15" />
-          <text x="60" y="128" textAnchor="middle" className="can-art__brand">
+          <rect x="20" y="118" width="80" height="56" fill="#000" opacity="0.15" />
+          <text x="60" y="138" textAnchor="middle" className="can-art__brand">
             {drink.brand}
           </text>
           {flavorLines.map((line, i) => (
-            <text key={i} x="60" y={143 + i * 13} textAnchor="middle" className="can-art__flavor">
+            <text key={i} x="60" y={154 + i * 13} textAnchor="middle" className="can-art__flavor">
               {line}
             </text>
           ))}

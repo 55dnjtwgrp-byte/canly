@@ -37,8 +37,6 @@ export function Profile() {
 
   return (
     <div className="page">
-      <div className="profile-banner" />
-
       <header className="profile-header">
         <div className="profile-avatar">
           {profile.avatarDataUrl ? (
