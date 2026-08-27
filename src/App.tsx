@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router-dom";
-import { NavBar } from "./components/NavBar";
+import { TopBar } from "./components/TopBar";
+import { BottomNav } from "./components/BottomNav";
 import { Home } from "./pages/Home";
 import { Log } from "./pages/Log";
 import { Profile } from "./pages/Profile";
@@ -7,12 +8,13 @@ import { Profile } from "./pages/Profile";
 function App() {
   return (
     <div className="app">
-      <NavBar />
+      <TopBar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/log" element={<Log />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
+      <BottomNav />
     </div>
   );
 }
