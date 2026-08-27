@@ -3,7 +3,9 @@
 
 create table if not exists pins (
   id text primary key,
-  drink_id text not null,
+  drink_id text,
+  custom_name text,
+  is_rare boolean not null default false,
   store_name text not null,
   city text,
   note text,
@@ -12,6 +14,12 @@ create table if not exists pins (
   posted_by text,
   created_at timestamptz not null default now()
 );
+
+-- Migration for a pins table created before rare/custom finds existed:
+-- safe to run again even if these columns are already there.
+alter table pins alter column drink_id drop not null;
+alter table pins add column if not exists custom_name text;
+alter table pins add column if not exists is_rare boolean not null default false;
 
 alter table pins enable row level security;
 

@@ -1,8 +1,15 @@
 import { useMemo, useState } from "react";
 import { drinks, trendingDrinkIds } from "../data/drinks";
 import { useRatings } from "../hooks/useRatings";
+import { usePins } from "../hooks/usePins";
+import { useSharedPins } from "../hooks/useSharedPins";
+import { useCommunityActivity } from "../hooks/useCommunityActivity";
+import { useWeeklyPopular } from "../hooks/useWeeklyPopular";
+import { resolvePinDrink } from "../lib/pinDrink";
 import { RateModal } from "../components/RateModal";
 import { DrinkRow } from "../components/DrinkRow";
+import { RareFindsRow } from "../components/RareFindsRow";
+import { CommunityActivityRow } from "../components/CommunityActivityRow";
 import type { Drink } from "../types";
 
 const drinkById = new Map(drinks.map((d) => [d.id, d]));
@@ -10,11 +17,30 @@ const drinkById = new Map(drinks.map((d) => [d.id, d]));
 export function Home() {
   const [activeDrink, setActiveDrink] = useState<Drink | null>(null);
   const { ratings, rateDrink, clearRating } = useRatings();
+  const { pins } = usePins();
+  const { sharedPins, isShared } = useSharedPins();
+  const community = useCommunityActivity();
+  const weeklyPopular = useWeeklyPopular();
 
-  const trending = useMemo(
-    () => trendingDrinkIds.map((id) => drinkById.get(id)).filter((d): d is Drink => Boolean(d)),
-    []
+  const displayPins = isShared ? sharedPins : pins;
+
+  const rareFinds = useMemo(
+    () =>
+      displayPins
+        .filter((p) => p.isRare)
+        .slice(0, 8)
+        .map((pin) => {
+          const drink = resolvePinDrink(pin, drinkById);
+          return drink ? { pin, drink } : null;
+        })
+        .filter((item): item is { pin: (typeof displayPins)[number]; drink: Drink } => item !== null),
+    [displayPins]
   );
+
+  const trending = useMemo(() => {
+    if (weeklyPopular.length > 0) return weeklyPopular;
+    return trendingDrinkIds.map((id) => drinkById.get(id)).filter((d): d is Drink => Boolean(d));
+  }, [weeklyPopular]);
 
   const recentlyLogged = useMemo(
     () =>
@@ -33,14 +59,9 @@ export function Home() {
       </header>
 
       <main>
-        <section className="drink-row">
-          <h2 className="section-title section-title--row">Friends Activity</h2>
-          <div className="friends-placeholder">
-            <p className="friends-placeholder__text">
-              See what your friends are drinking here once profiles go public.
-            </p>
-          </div>
-        </section>
+        <CommunityActivityRow entries={community} />
+
+        <RareFindsRow items={rareFinds} />
 
         <DrinkRow title="Popular This Week" drinks={trending} ratings={ratings} onSelect={setActiveDrink} />
         <DrinkRow title="Recently Logged" drinks={recentlyLogged} ratings={ratings} onSelect={setActiveDrink} />

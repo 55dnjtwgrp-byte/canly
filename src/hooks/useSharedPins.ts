@@ -4,7 +4,9 @@ import type { Pin } from "../types";
 
 interface PinRow {
   id: string;
-  drink_id: string;
+  drink_id: string | null;
+  custom_name: string | null;
+  is_rare: boolean | null;
   store_name: string;
   city: string | null;
   note: string | null;
@@ -17,7 +19,9 @@ interface PinRow {
 function rowToPin(row: PinRow): Pin {
   return {
     id: row.id,
-    drinkId: row.drink_id,
+    drinkId: row.drink_id ?? undefined,
+    customName: row.custom_name ?? undefined,
+    isRare: row.is_rare ?? false,
     storeName: row.store_name,
     city: row.city ?? undefined,
     note: row.note ?? undefined,
@@ -59,7 +63,9 @@ export function useSharedPins() {
       if (!supabase) return false;
       const { error } = await supabase.from("pins").insert({
         id: pin.id,
-        drink_id: pin.drinkId,
+        drink_id: pin.drinkId ?? null,
+        custom_name: pin.customName ?? null,
+        is_rare: pin.isRare ?? false,
         store_name: pin.storeName,
         city: pin.city ?? null,
         note: pin.note ?? null,
