@@ -17,3 +17,12 @@ export interface Profile {
   bio: string;
   avatarDataUrl: string | null;
 }
+
+export interface Pin {
+  id: string;
+  drinkId: string;
+  storeName: string;
+  city?: string;
+  note?: string;
+  createdAt: string;
+}
