@@ -14,8 +14,16 @@ createRoot(document.getElementById('root')!).render(
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch(() => {
-      // installability is a progressive enhancement — ignore registration failures
-    })
+    const swUrl = `${import.meta.env.BASE_URL}sw.js`
+    // Confirm the file is actually served before registering — a bare register()
+    // call logs a browser-level console error on 404 that .catch() can't suppress
+    // (e.g. when this bundle is inlined into a single-file build with no sw.js).
+    fetch(swUrl, { method: 'HEAD' })
+      .then((res) => {
+        if (res.ok) {
+          navigator.serviceWorker.register(swUrl).catch(() => {})
+        }
+      })
+      .catch(() => {})
   })
 }

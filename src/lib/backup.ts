@@ -1,3 +1,11 @@
+declare global {
+  interface Window {
+    claude?: {
+      use: (name: string) => Promise<{ save: (req: { filename: string; data: string }) => Promise<unknown> } | null>;
+    };
+  }
+}
+
 const BACKUP_KEYS = ["canly:ratings", "canly:favorites", "canly:profile", "canly:pins"];
 
 interface Backup {
@@ -6,7 +14,7 @@ interface Backup {
   data: Record<string, unknown>;
 }
 
-export function exportBackup(): void {
+function buildBackupJson(): string {
   const data: Record<string, unknown> = {};
   for (const key of BACKUP_KEYS) {
     const raw = localStorage.getItem(key);
@@ -17,13 +25,29 @@ export function exportBackup(): void {
       // skip a corrupted entry rather than fail the whole export
     }
   }
-
   const backup: Backup = { version: 1, exportedAt: new Date().toISOString(), data };
-  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+  return JSON.stringify(backup, null, 2);
+}
+
+export async function exportBackup(): Promise<void> {
+  const json = buildBackupJson();
+  const filename = `canly-backup-${new Date().toISOString().slice(0, 10)}.json`;
+
+  // Inside the Claude artifact viewer, a plain <a download> link is inert —
+  // the sandbox blocks it. Use the downloads capability there when present.
+  if (window.claude) {
+    const downloads = await window.claude.use("downloads").catch(() => null);
+    if (downloads) {
+      await downloads.save({ filename, data: json });
+      return;
+    }
+  }
+
+  const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `canly-backup-${new Date().toISOString().slice(0, 10)}.json`;
+  link.download = filename;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

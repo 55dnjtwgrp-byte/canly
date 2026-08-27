@@ -21,6 +21,7 @@ export function Profile() {
   const [editingProfile, setEditingProfile] = useState(false);
   const [activeDrink, setActiveDrink] = useState<Drink | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
+  const [exportError, setExportError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const ratedEntries = Object.entries(ratings).sort(
@@ -38,6 +39,18 @@ export function Profile() {
     if (pickingSlot === null) return;
     setFavorite(pickingSlot, drink.id);
     setPickingSlot(null);
+  };
+
+  const handleExport = async () => {
+    setExportError(null);
+    try {
+      await exportBackup();
+    } catch (err) {
+      const code = (err as { code?: string } | undefined)?.code;
+      if (code !== "declined") {
+        setExportError("Couldn't save the backup — try again.");
+      }
+    }
   };
 
   const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,7 +178,7 @@ export function Profile() {
           Everything lives in this browser only. Export a backup so you don't lose it.
         </p>
         <div className="data-section__actions">
-          <button type="button" className="btn btn--ghost-outline" onClick={exportBackup}>
+          <button type="button" className="btn btn--ghost-outline" onClick={handleExport}>
             Export data
           </button>
           <button type="button" className="btn btn--ghost-outline" onClick={() => fileInputRef.current?.click()}>
@@ -179,6 +192,7 @@ export function Profile() {
             className="visually-hidden"
           />
         </div>
+        {exportError && <p className="form-error">{exportError}</p>}
         {importError && <p className="form-error">{importError}</p>}
       </main>
 
