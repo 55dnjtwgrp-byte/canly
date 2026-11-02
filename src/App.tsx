@@ -8,6 +8,9 @@ import { Catalog } from "./pages/Catalog";
 import { Pins } from "./pages/Pins";
 import { Profile } from "./pages/Profile";
 import { PublicProfile } from "./pages/PublicProfile";
+import { Terms } from "./pages/Terms";
+import { Privacy } from "./pages/Privacy";
+import { LegalFooter } from "./components/LegalFooter";
 import { UpdatePrompt } from "./components/UpdatePrompt";
 
 function App() {
@@ -22,7 +25,10 @@ function App() {
           <Route path="/drinks" element={<Catalog />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/u/:username" element={<PublicProfile />} />
+          <Route path="/legal/terms" element={<Terms />} />
+          <Route path="/legal/privacy" element={<Privacy />} />
         </Routes>
+        <LegalFooter />
         <UpdatePrompt />
         <BottomNav />
       </div>

@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { MIN_AGE } from "../lib/legal";
 
 interface AuthModalProps {
   onClose: () => void;
@@ -16,6 +18,7 @@ export function AuthModal({ onClose, onAuthed }: AuthModalProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [agreed, setAgreed] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,9 +80,26 @@ export function AuthModal({ onClose, onAuthed }: AuthModalProps) {
             />
           </label>
 
+          {mode === "signup" && (
+            <label className="form-field form-field--checkbox auth-modal__agree">
+              <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
+              <span>
+                I'm at least {MIN_AGE} and agree to the{" "}
+                <Link to="/legal/terms" onClick={onClose}>
+                  Terms
+                </Link>{" "}
+                and{" "}
+                <Link to="/legal/privacy" onClick={onClose}>
+                  Privacy Policy
+                </Link>
+                .
+              </span>
+            </label>
+          )}
+
           {error && <p className="form-error">{error}</p>}
 
-          <button type="submit" className="btn btn--primary auth-modal__submit" disabled={submitting}>
+          <button type="submit" className="btn btn--primary auth-modal__submit" disabled={submitting || (mode === "signup" && !agreed)}>
             {submitting ? "One sec…" : mode === "signup" ? "Sign up" : "Log in"}
           </button>
         </form>
