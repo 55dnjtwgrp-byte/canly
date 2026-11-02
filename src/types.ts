@@ -4,6 +4,9 @@ export interface Drink {
   brand: string;
   flavor?: string;
   color: string;
+  caffeineMg?: number;
+  sugarFree?: boolean;
+  sizeOz?: number;
 }
 
 export interface Rating {

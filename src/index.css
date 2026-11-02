@@ -1429,7 +1429,7 @@ body {
 .buy-link--modal {
   display: block;
   text-align: center;
-  margin: -8px 0 12px;
+  margin: 0 0 12px;
 }
 
 .buy-link--slot {
@@ -1501,4 +1501,32 @@ body {
   padding: 4px 8px;
   font: inherit;
   font-size: 13px;
+}
+
+.catalog-chips--facts {
+  margin-top: 8px;
+}
+
+.drink-facts {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 0;
+}
+
+.drink-facts__item {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.drink-facts__item--good {
+  color: var(--text);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 25%, transparent);
 }

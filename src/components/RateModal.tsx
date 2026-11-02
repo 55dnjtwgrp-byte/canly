@@ -3,6 +3,7 @@ import type { Drink, Rating } from "../types";
 import { StarRating } from "./StarRating";
 import { CanArt } from "./CanArt";
 import { BuyLink } from "./BuyLink";
+import { DrinkFacts } from "./DrinkFacts";
 import { AffiliateDisclosure } from "./AffiliateDisclosure";
 
 interface RateModalProps {
@@ -33,6 +34,7 @@ export function RateModal({ drink, existing, onClose, onSave, onDelete }: RateMo
         </div>
         <h2 className="modal__title">{drink.name}</h2>
         <p className="modal__brand">{drink.brand}</p>
+        <DrinkFacts drink={drink} />
         <BuyLink drink={drink} className="buy-link--modal" />
 
         <div className="modal__rating">
