@@ -8,6 +8,7 @@ import { Catalog } from "./pages/Catalog";
 import { Pins } from "./pages/Pins";
 import { Profile } from "./pages/Profile";
 import { PublicProfile } from "./pages/PublicProfile";
+import { UpdatePrompt } from "./components/UpdatePrompt";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/u/:username" element={<PublicProfile />} />
         </Routes>
+        <UpdatePrompt />
         <BottomNav />
       </div>
     </AuthProvider>
