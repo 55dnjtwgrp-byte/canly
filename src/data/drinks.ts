@@ -1,6 +1,6 @@
 import type { Drink } from "../types";
 
-export const drinks: Drink[] = [
+const baseDrinks: Drink[] = [
   // Red Bull
   { id: "redbull-original", name: "Red Bull", brand: "Red Bull", flavor: "Original", color: "#0a3a8c" },
   { id: "redbull-sugarfree", name: "Red Bull Sugarfree", brand: "Red Bull", flavor: "Sugarfree", color: "#7a7d80" },
@@ -142,6 +142,49 @@ export const drinks: Drink[] = [
   { id: "ryse-fuel", name: "Ryse Fuel", brand: "Ryse", flavor: "Original", color: "#1e1e1e" },
   { id: "ryse-fuel-watermelon", name: "Ryse Fuel Watermelon", brand: "Ryse", flavor: "Watermelon", color: "#e0507a" },
 ];
+
+// Quick facts (caffeine per can, sugar-free, can size). Defaults come from each
+// brand's standard US can; a field is left out whenever we aren't sure of it,
+// and the UI simply doesn't show what's missing.
+type Facts = Pick<Drink, "caffeineMg" | "sugarFree" | "sizeOz">;
+
+const brandFacts: Record<string, Facts> = {
+  "Red Bull": { caffeineMg: 80, sizeOz: 8.4, sugarFree: false },
+  Celsius: { caffeineMg: 200, sizeOz: 12, sugarFree: true },
+  Ghost: { caffeineMg: 200, sizeOz: 16, sugarFree: true },
+  C4: { caffeineMg: 200, sizeOz: 16, sugarFree: true },
+  Reign: { caffeineMg: 300, sizeOz: 16, sugarFree: true },
+  Bang: { caffeineMg: 300, sizeOz: 16, sugarFree: true },
+  "Alani Nu": { caffeineMg: 200, sizeOz: 12, sugarFree: true },
+  "Bucked Up": { caffeineMg: 300, sizeOz: 12, sugarFree: true },
+  Prime: { caffeineMg: 200, sizeOz: 12, sugarFree: true },
+  Monster: { sizeOz: 16 },
+  Rockstar: { sizeOz: 16 },
+  NOS: { sizeOz: 16 },
+};
+
+function factsFor(d: Drink): Facts {
+  const base = brandFacts[d.brand] ?? {};
+  if (d.id === "redbull-sugarfree" || d.id === "redbull-zero") return { ...base, sugarFree: true };
+
+  if (d.brand === "Monster") {
+    if (d.id === "monster-original") return { ...base, caffeineMg: 160, sugarFree: false };
+    if (d.id.startsWith("monster-ultra")) return { ...base, caffeineMg: 140, sugarFree: true };
+    if (d.id === "monster-zero-sugar" || d.id === "monster-absolute-zero") return { ...base, sugarFree: true };
+    if (d.id.startsWith("java-monster")) return { caffeineMg: 188, sizeOz: 15, sugarFree: false };
+    if (["monster-mango-loco", "monster-pipeline-punch", "monster-pacific-punch", "monster-khaos"].includes(d.id)) {
+      return { ...base, sugarFree: false };
+    }
+  }
+  if (d.brand === "Rockstar") {
+    if (d.id === "rockstar-original" || d.id === "rockstar-punched") return { ...base, caffeineMg: 160, sugarFree: false };
+    if (d.id === "rockstar-zero-carb" || d.id === "rockstar-pure-zero-punched") return { ...base, caffeineMg: 160, sugarFree: true };
+  }
+  if (d.id === "nos-original") return { ...base, caffeineMg: 160, sugarFree: false };
+  return base;
+}
+
+export const drinks: Drink[] = baseDrinks.map((d) => ({ ...d, ...factsFor(d) }));
 
 // Curated picks shown in the "Popular This Week" row when there isn't enough
 // real activity yet to rank it live. Editorial, kept intentionally small.
