@@ -2,6 +2,8 @@ import { useState } from "react";
 import type { Drink, Rating } from "../types";
 import { StarRating } from "./StarRating";
 import { CanArt } from "./CanArt";
+import { BuyLink } from "./BuyLink";
+import { AffiliateDisclosure } from "./AffiliateDisclosure";
 
 interface RateModalProps {
   drink: Drink;
@@ -31,6 +33,7 @@ export function RateModal({ drink, existing, onClose, onSave, onDelete }: RateMo
         </div>
         <h2 className="modal__title">{drink.name}</h2>
         <p className="modal__brand">{drink.brand}</p>
+        <BuyLink drink={drink} className="buy-link--modal" />
 
         <div className="modal__rating">
           <StarRating value={stars} onChange={setStars} size="lg" />
@@ -54,6 +57,7 @@ export function RateModal({ drink, existing, onClose, onSave, onDelete }: RateMo
             Save
           </button>
         </div>
+        <AffiliateDisclosure />
       </div>
     </div>
   );

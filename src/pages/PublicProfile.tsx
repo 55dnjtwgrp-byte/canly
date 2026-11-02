@@ -5,6 +5,8 @@ import { useFollow } from "../hooks/useFollow";
 import { useAuth } from "../hooks/useAuth";
 import { StarRating } from "../components/StarRating";
 import { CanArt } from "../components/CanArt";
+import { BuyLink } from "../components/BuyLink";
+import { AffiliateDisclosure } from "../components/AffiliateDisclosure";
 
 const drinkById = new Map(drinks.map((d) => [d.id, d]));
 
@@ -125,6 +127,7 @@ export function PublicProfile() {
                       <CanArt drink={drink} />
                     </div>
                     <p className="favorite-slot__name">{drink.name}</p>
+                    <BuyLink drink={drink} label="Get it" className="buy-link--slot" />
                   </div>
                 ) : (
                   <div className="favorite-slot__empty favorite-slot__empty--static">
@@ -163,6 +166,7 @@ export function PublicProfile() {
             </ul>
           </>
         )}
+        <AffiliateDisclosure />
       </main>
     </div>
   );
