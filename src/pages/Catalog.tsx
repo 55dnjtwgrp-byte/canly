@@ -48,7 +48,7 @@ export function Catalog() {
   return (
     <div className="page">
       <header className="header">
-        <p className="tagline">Every drink on Canly!.</p>
+        <p className="tagline">Every drink on Canly.</p>
         <input
           type="search"
           className="search"
