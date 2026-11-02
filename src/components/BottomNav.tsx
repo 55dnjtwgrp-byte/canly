@@ -12,13 +12,17 @@ export function BottomNav() {
           to="/"
           end
           className={({ isActive }) => `bottom-nav__item ${isActive ? "bottom-nav__item--active" : ""}`}
-          aria-label="Drinks"
+          aria-label="Home"
         >
           <svg className="bottom-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <path
+              d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1v-9z"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinejoin="round"
+            />
           </svg>
-          <span className="bottom-nav__label">Drinks</span>
+          <span className="bottom-nav__label">Home</span>
         </NavLink>
 
         <NavLink
@@ -45,6 +49,18 @@ export function BottomNav() {
         >
           <span className="bottom-nav__add-icon">+</span>
           <span className="bottom-nav__label">Log</span>
+        </NavLink>
+
+        <NavLink
+          to="/drinks"
+          className={({ isActive }) => `bottom-nav__item ${isActive ? "bottom-nav__item--active" : ""}`}
+          aria-label="Drinks"
+        >
+          <svg className="bottom-nav__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          <span className="bottom-nav__label">Drinks</span>
         </NavLink>
 
         <NavLink
