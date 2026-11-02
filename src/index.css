@@ -1560,3 +1560,63 @@ body {
   padding: 7px 16px;
   cursor: pointer;
 }
+
+.legal {
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.legal h2 {
+  font-size: 17px;
+  margin: 28px 0 8px;
+}
+
+.legal p,
+.legal li {
+  font-size: 15px;
+}
+
+.legal ul {
+  padding-left: 20px;
+}
+
+.legal__title {
+  font-size: 28px;
+  margin: 8px 0 4px;
+}
+
+.legal__updated,
+.legal__back {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin: 0 0 16px;
+}
+
+.legal a {
+  color: var(--text);
+}
+
+.legal-footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 8px 20px 110px;
+}
+
+.legal-footer p {
+  margin: 4px 0;
+}
+
+.legal-footer a {
+  color: var(--text-dim);
+}
+
+.auth-modal__agree {
+  font-size: 13px;
+  align-items: flex-start;
+}
+
+.auth-modal__agree a {
+  color: var(--text);
+}
